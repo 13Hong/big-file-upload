@@ -1,0 +1,16 @@
+# 通用
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# 日志 & 临时文件
+logs/
+*.log
+
+# OS
+.DS_Store
+
+# 上传临时文件
+backend/storage/
