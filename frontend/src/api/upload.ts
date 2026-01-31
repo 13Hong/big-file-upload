@@ -13,12 +13,16 @@ export type InitPayload = {
     totalChunks: number
 }
 
+export function testHealth(){
+    return http.get("/health")
+}
+
 export async function initUpload(payload: InitPayload) {
     return http.post("/upload/init",payload)
 }
 
 export async function getUploadStatus(uploadId: string) {
-    const res = await http.get<{ ok:boolean; uploaded: number[]}>("/upload/status",{ params:uploadId })
+    const res = await http.get<{ ok:boolean; uploaded: number[]}>("/upload/status",{ params:{ uploadId } })
     return res.data
 }
 
