@@ -1,19 +1,30 @@
-import SparkMD5 from "spark-md5"
+import Worker from "../workers/hash.worker.ts?worker"
 
 /**
- * 计算文件 MD5 （用来做 uploadId）
- * 为了不卡 UI，这里按分片读取（不是一次性读全文件）
+ * 计算文件 MD5 （Web Worker 版）
+ * 不卡顿主线程
  */
-export async function calcFileMD5(file: File, chunkSize = 2 * 1024 * 1024) {
-    const spark = new SparkMD5.ArrayBuffer()
-    const total = Math.ceil(file.size / chunkSize)
+export function calcFileMD5(file: File, chunkSize = 2 * 1024 * 1024): Promise<string> {
+    return new Promise((resolve,reject) => {
+        // Vite 导入 worker 的方式
+        const worker = new Worker()
+        
+        worker.postMessage({ file, chunkSize })
 
-    for(let i = 0; i < total;i++) {
-        const start = i * chunkSize
-        const end = Math.min(start + chunkSize,file.size)
-        const buf = await file.slice(start,end).arrayBuffer()
-        spark.append(buf)
-    }
+        worker.onmessage = (e) => {
+            const { hash, error } = e.data
+            if(hash) {
+                resolve(hash)
+                worker.terminate()
+            } else {
+                reject(error)
+                worker.terminate()
+            }
+        }
 
-    return spark.end()
+        worker.onerror = (err) => {
+            reject(err)
+            worker.terminate()
+        }
+    })
 }

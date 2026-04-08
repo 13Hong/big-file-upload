@@ -26,9 +26,10 @@ export async function getUploadStatus(uploadId: string) {
     return res.data
 }
 
-export async function uploadChunk(form: FormData) {
+export async function uploadChunk(form: FormData, signal?: AbortSignal) {
     return http.post("/upload/chunk",form, {
-        headers:{ "Content-Type": "multipart/form-data" }
+        headers:{ "Content-Type": "multipart/form-data" },
+        signal
     })
 }
 
