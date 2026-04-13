@@ -39,8 +39,7 @@ const statusText = computed(() => {
 
     <div class="glass-card">
         <div class="card-header">
-            <h2 class="title">Turbo Upload</h2>
-            <p class="subtitle">Secure • Resumable • Blazing Fast</p>
+            <h2 class="title">Big File Upload</h2>
         </div>
 
         <div class="upload-zone" :class="{ 'has-file': !!fileRef }">
